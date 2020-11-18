@@ -1,6 +1,6 @@
 import requests
 import json
-
+from mock_package import mock_test
 
 class sendRequest:
 
