@@ -1,0 +1,14 @@
+  id : '1'  # id
+#  column_Id : 'A' # id对应的列号
+  case_exc : '3'  # 是否执行
+  url : '4' # url
+  request_method : '5'  # 请求方式
+  header : '6'  # header
+  case_be_depend : '7'  #  被依赖id
+  case_depend : '8'  #  被依赖id
+  data_depend : '9'  #  依赖数据
+  field_depend : '10'  # 依赖数据所属字段
+  request_data : '11' # 请求数据
+  expect : '12' # 预期结果
+  result : '13' # 实际结果
+
