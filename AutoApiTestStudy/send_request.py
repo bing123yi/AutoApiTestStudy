@@ -1,28 +1,37 @@
 import requests
 import json
-from mock_package import mock_test
+from mock_package import mock_data
 
-class sendRequest:
+class SendRequest:
 
     def __init__(self):
         pass
 
-    def send_request(self, url, method, data=None):
-        if method == 'GET':
-            result = requests.get(url=url).json()
-        elif method == 'POST':
-            result = requests.post(url=url, data=data).json()
+    def send_request(self, url, method, data=None, header=None):
+        if header is not None:
+            if method == 'get':
+                result = requests.get(url=url, headers=header, verify=False)
+            elif method == 'post':
+                result = requests.post(url=url, data=data, headers=header, verify=False)
         else:
-            result = 'wrong method'
-        return json.dumps(result, indent=2, sort_keys=True)
+            if method == 'get':
+                result = requests.get(url=url, verify=False)
+            elif method == 'post':
+                result = requests.post(url=url, data=data, verify=False)
+            else:
+                result = 'wrong method'
+
+        # 直接用mock写死返回数据
+        # result = mock_data(url=url, request_data=None, method=method, response_data=data)
+
+        # 获取接口返回状态码
+        # print(result.status_code)
+
+        return json.dumps(result.json(), indent=2, sort_keys=True)
 
 
 if __name__ == '__main__':
-    test = sendRequest()
-    url = 'http://127.0.0.1:8000/login/'
-    data = {
-        'username': 'test111name',
-        'password': '12222222',
+    test = SendRequest()
+    url = 'https://qilin.shentongcard.com/qilin/wxbear/ajaxIndex'
 
-    }
-    print(test.send_request(url, 'POST', data))
+    print(test.send_request(url, 'get'))
