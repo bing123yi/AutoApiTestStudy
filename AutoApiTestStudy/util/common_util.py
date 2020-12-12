@@ -11,7 +11,7 @@ class CommonUtil:
         :return:
         """
 
-        if str_one in str_two:
+        if str(str_one) in str(str_two):
             flag = True
         else:
             flag = False

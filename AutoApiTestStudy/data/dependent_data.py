@@ -1,35 +1,22 @@
-from conf.yaml_config import YamlConfig
-from util.operation_excel import OperationExcel
+import json
+
+def dependent_case_handle(res_data=None, data_depend=None):
+    # opera_json = OperationJson(file_name='test2')
+    # data_depend = 'data:items:8:item_id'
+    # res_data = opera_json.read_data()
+
+    handle_data = json.loads(res_data)
+    keys = str.split(data_depend, ':')
+
+    for i in range(len(keys)):
+        if str.isdigit(keys[i]):
+            key = int(keys[i])
+        else:
+            key = keys[i]
+        handle_data = handle_data[key]
+    return handle_data
 
 
-class DependentData:
-
-    def __init__(self, file_name=None):
-        self.config = YamlConfig().YamlConfig
-        self.opera_excel = OperationExcel(file_name=file_name)
-
-    # 通过case_id拿整行数据
-    def get_depend_case_data(self, case_id):
-        row = self.get_row_num(case_id)
 
 
 
-
-    # 通过case_id的值拿到行号
-    def get_row_num(self, case_id):
-        case_id = str(case_id)
-        col_dict = self.get_column_data('column_Id')
-        # print(col_dict)
-        # exit()
-        return col_dict[case_id]
-
-
-    def get_column_data(self, column_name):
-        col_name = self.config[column_name]
-        column_data = self.opera_excel.get_column_value(col_name)
-        return column_data
-
-
-if __name__ == '__main__':
-    test = DependentData()
-    print(test.get_row_num('login_3'))

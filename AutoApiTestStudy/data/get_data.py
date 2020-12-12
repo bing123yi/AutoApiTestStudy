@@ -1,6 +1,7 @@
 from util.operation_excel import OperationExcel
 from util.operation_json import OperationJson
 from conf.yaml_config import YamlConfig
+import json
 
 
 class GetData:
@@ -28,15 +29,17 @@ class GetData:
             flag = False
         return flag
 
-    # 是否有header
-    def get_is_header(self, row):
+    # 获取header
+    def get_header(self, row):
         col = self.config['header']
-        header = self.opera_excel.get_cell_value(row, col)
-        if header == 'yes':
-            flag = True
+        json_file_name = self.opera_excel.get_cell_value(row, col)
+        if json_file_name == '':
+            return None
         else:
-            flag = False
-        return flag
+            # 通过获取关键字拿到data数据
+            opera_json = OperationJson(file_name=json_file_name)
+            header = opera_json.read_data()
+        return header
 
     # 获取请求方式
     def get_request_method(self, row):
@@ -48,15 +51,33 @@ class GetData:
     def get_url(self, row):
         col = self.config['url']
         url = self.opera_excel.get_cell_value(row, col)
+        if '?' not in url:
+            url += '?'
         return url
 
     # 获取请求数据
-    def get_request_data(self, row):
+    def get_request_data(self, request_method, row):
         col = self.config['request_data']
-        request_data = self.opera_excel.get_cell_value(row, col)
-        if request_data == '':
+        json_file_name = self.opera_excel.get_cell_value(row, col)
+        if json_file_name == '':
             return None
+        else:
+            # 通过获取关键字拿到data数据
+            opera_json = OperationJson(file_name=json_file_name)
+            request_data = opera_json.read_data()
         return request_data
+
+    # 格式化 请求参数
+    def format_request_data(self, request_method, request_data):
+        if request_method == 'get':
+            request_data_format = []
+            if len(request_data) > 0:
+                for key, value in request_data.items():
+                    request_data_format.append(key + '=' + value)
+                return_data = '&'.join(request_data_format)
+        elif request_method == 'post':
+            return_data = json.dumps(request_data)
+        return return_data
 
     # 获取被依赖case_id
     def get_case_be_depend(self, row):
@@ -89,12 +110,6 @@ class GetData:
         if field_depend == '':
             return None
         return field_depend
-
-    # 通过获取关键字拿到data数据
-    def get_data_for_json(self, row):
-        data_key = self.get_request_data(row)
-        opera_json = OperationJson(file_name='test2')
-        return opera_json.data[data_key]
 
     # 获取预期结果
     def get_expect_data(self, row):
